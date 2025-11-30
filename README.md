@@ -314,3 +314,112 @@ Retorna um JSON com frases montadas a partir dos dados do serviço de usuários,
 ```bash
 docker-compose down
 ```
+# Desafio 5 — Microsserviços com API Gateway
+
+Neste desafio foi montada uma arquitetura com **3 serviços**:
+
+- um microsserviço de **usuários**;
+- um microsserviço de **pedidos**;
+- um **API Gateway** que centraliza o acesso aos dois.
+
+O objetivo é ter um ponto único de entrada, enquanto os dados reais vêm de serviços separados.
+
+---
+
+## Visão geral dos serviços
+
+- **service_usuarios**
+  - Rota principal: `GET /users`
+  - Retorna uma lista de usuários em JSON.
+
+- **service_pedidos**
+  - Rota principal: `GET /orders`
+  - Retorna uma lista de pedidos em JSON.
+
+- **gateway**
+  - Rota `GET /users`: chama o serviço de usuários e devolve a resposta.
+  - Rota `GET /orders`: chama o serviço de pedidos e devolve a resposta.
+  - Do ponto de vista do cliente, só o gateway é acessado.
+
+---
+
+## Estrutura do desafio
+
+```text
+desafio5/
+  docker-compose.yml
+  gateway/
+    Dockerfile
+    main.py
+    requirements.txt
+  service_usuarios/
+    Dockerfile
+    main.py
+    requirements.txt
+  service_pedidos/
+    Dockerfile
+    main.py
+    requirements.txt
+```
+
+---
+
+## Como executar
+
+Na pasta do desafio:
+
+```bash
+cd desafio5
+docker-compose up
+```
+
+O Docker Compose vai:
+
+- subir o serviço de usuários;
+- subir o serviço de pedidos;
+- subir o gateway;
+- conectar tudo na rede `api_net`.
+
+---
+
+## Testando pelo Gateway
+
+Todas as chamadas devem ser feitas para o gateway na porta **9000** do host.
+
+Listar usuários:
+
+```bash
+curl http://localhost:9000/users
+```
+
+Listar pedidos:
+
+```bash
+curl http://localhost:9000/orders
+```
+
+As respostas virão do gateway, que por sua vez consulta os outros serviços.
+
+---
+
+## Testando diretamente os microsserviços (opcional)
+
+Se quiser chamar direto:
+
+```bash
+# Usuários
+curl http://localhost:7000/users  # se você expuser portas extras
+
+# Pedidos
+curl http://localhost:7002/orders
+```
+
+No arquivo fornecido, a exposição direta não é necessária, porque o foco é usar o gateway como ponto único de entrada.
+
+---
+
+## Como parar
+
+```bash
+docker-compose down
+```
