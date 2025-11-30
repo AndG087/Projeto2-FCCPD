@@ -8,7 +8,7 @@ app = Flask(__name__)
 def index():
     hostname = socket.gethostname()
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return jsy(
+    return jsonify(
         message="Servidor HTTP respondendo com sucesso.",
         host=hostname,
         timestamp=now
