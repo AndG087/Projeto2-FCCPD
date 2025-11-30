@@ -139,3 +139,87 @@ Os produtos continuam lá graças ao volume **dados_pg**.
 ```bash
 docker-compose down
 ```
+# Desafio 3 — Orquestração de 3 serviços com Docker Compose
+
+Neste desafio foi criada uma aplicação composta por **três serviços** trabalhando juntos:
+
+- uma API em **FastAPI** (web),
+- um banco **PostgreSQL** (db),
+- e um serviço de **Redis** (cache).
+
+O objetivo é usar o Docker Compose para subir todos esses serviços, configurar a comunicação entre eles e demonstrar que a API acessa tanto o banco quanto o cache.
+
+---
+
+## O que a aplicação faz
+
+Sempre que a rota principal (`/`) é acessada:
+
+1. Um contador no Redis é incrementado.
+2. A API busca no PostgreSQL todas as mensagens da tabela `mensagens`.
+3. A resposta junta as duas informações em um JSON.
+
+Exemplo de resposta:
+
+```json
+{
+  "visitas": 4,
+  "mensagens_salvas_no_banco": [
+    "Bem-vindo ao sistema!",
+    "Mensagem registrada com sucesso.",
+    "Dados carregados do PostgreSQL."
+  ]
+}
+```
+
+---
+
+## Estrutura do desafio
+
+```
+desafio3/
+  docker-compose.yml
+  api/
+    Dockerfile
+    main.py
+    requirements.txt
+  db/
+    init.sql
+```
+
+---
+
+## Como executar
+
+Dentro da pasta do desafio:
+
+```bash
+docker-compose up
+```
+
+Quando tudo estiver rodando, acesse:
+
+```
+http://localhost:8081/
+```
+
+Cada refresh da página aumenta o contador no Redis.
+
+---
+
+## Como verificar os dados do banco
+
+```bash
+docker exec -it desafio3_db psql -U appuser -d mensageria -c "SELECT * FROM mensagens;"
+```
+
+---
+
+## Como parar tudo
+
+```bash
+docker-compose down
+```
+
+Isso derruba os containers, mas o volume `pgdata3` mantém os dados do banco.
+
