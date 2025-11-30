@@ -408,7 +408,7 @@ Se quiser chamar direto:
 
 ```bash
 # Usuários
-curl http://localhost:7000/users  # se você expuser portas extras
+curl https://localhost:7000/users  # se você expuser portas extras
 
 # Pedidos
 curl http://localhost:7002/orders
