@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  database:
+    image: postgres:15
+    container_name: desafio2_pg
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: loja
+    volumes:
+      - dados_pg:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+
+  leitor:
+    build: ./reader
+    container_name: desafio2_reader
+    depends_on:
+      - database
+
+volumes:
+  dados_pg:
