@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  service_usuarios:
+    build: ./service_usuarios
+    container_name: desafio4_service_usuarios
+    ports:
+      - "7000:8000"
+    networks:
+      - rede_interna
+
+  service_relatorios:
+    build: ./service_relatorios
+    container_name: desafio4_service_relatorios
+    depends_on:
+      - service_usuarios
+    ports:
+      - "7001:8001"
+    networks:
+      - rede_interna
+
+networks:
+  rede_interna:
+    driver: bridge
