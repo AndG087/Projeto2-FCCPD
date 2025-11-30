@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  web:
+    build: ./api
+    container_name: desafio3_web
+    ports:
+      - "8081:8000"
+    depends_on:
+      - db
+      - cache
+    networks:
+      - internal_net
+
+  db:
+    image: postgres:15
+    container_name: desafio3_db
+    environment:
+      POSTGRES_USER: appuser
+      POSTGRES_PASSWORD: app123
+      POSTGRES_DB: mensageria
+    volumes:
+      - pgdata3:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - internal_net
+
+  cache:
+    image: redis:7
+    container_name: desafio3_cache
+    networks:
+      - internal_net
+
+volumes:
+  pgdata3:
+
+networks:
+  internal_net:
+    driver: bridge
