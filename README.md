@@ -61,3 +61,81 @@ curl http://localhost:8080/
 ```bash
 docker-compose down
 ```
+
+
+# Desafio 2 — Persistência com Volumes no Docker
+
+O objetivo deste desafio é mostrar que os dados do banco continuam existindo mesmo depois que o container é removido.  
+Para isso, montei um pequeno banco PostgreSQL com volume e um leitor em Python que consulta os dados.
+
+---
+
+## O que foi feito
+
+- Usei um container PostgreSQL que roda um script SQL automaticamente.
+- Os dados são salvos em um volume chamado **dados_pg**.
+- Criei um segundo container que se conecta ao banco e imprime os produtos cadastrados.
+- Removi e subi o container novamente para confirmar que os dados permaneceram.
+
+---
+
+## Estrutura do desafio
+
+```
+desafio2/
+  docker-compose.yml
+  init.sql
+  reader/
+    Dockerfile
+    reader.py
+```
+
+---
+
+## Como executar
+
+Entre na pasta do desafio:
+
+```bash
+cd desafio2
+```
+
+Suba os containers:
+
+```bash
+docker-compose up
+```
+
+O leitor vai tentar acessar o banco e mostrar a lista de produtos cadastrados.
+
+---
+
+## Testando a persistência
+
+Derrube tudo:
+
+```bash
+docker-compose down
+```
+
+Suba novamente:
+
+```bash
+docker-compose up -d
+```
+
+Cheque os dados:
+
+```bash
+docker exec -it desafio2_pg psql -U admin -d loja -c "SELECT * FROM produtos;"
+```
+
+Os produtos continuam lá graças ao volume **dados_pg**.
+
+---
+
+## Como parar
+
+```bash
+docker-compose down
+```
