@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  gateway:
+    build: ./gateway
+    container_name: desafio5_gateway
+    depends_on:
+      - usuarios
+      - pedidos
+    ports:
+      - "9000:8000"
+    networks:
+      - api_net
+
+  usuarios:
+    build: ./service_usuarios
+    container_name: desafio5_usuarios
+    networks:
+      - api_net
+
+  pedidos:
+    build: ./service_pedidos
+    container_name: desafio5_pedidos
+    networks:
+      - api_net
+
+networks:
+  api_net:
+    driver: bridge
