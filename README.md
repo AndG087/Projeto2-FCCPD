@@ -223,3 +223,94 @@ docker-compose down
 
 Isso derruba os containers, mas o volume `pgdata3` mantém os dados do banco.
 
+# Desafio 4 — Microsserviços independentes
+
+Neste desafio foram criados dois microsserviços separados que se comunicam via HTTP:
+
+- um serviço de **usuários** (service_usuarios),
+- e um serviço de **relatórios** (service_relatorios) que consome o primeiro.
+
+A ideia é mostrar a comunicação entre serviços independentes usando requisições HTTP dentro de uma mesma rede Docker.
+
+---
+
+## Visão geral
+
+- O **service_usuarios** expõe um endpoint `/usuarios` que retorna uma lista em JSON com informações de usuários.
+- O **service_relatorios** chama esse endpoint, processa os dados recebidos e devolve frases prontas em `/relatorio-usuarios`.
+
+Cada serviço tem seu próprio Dockerfile e suas próprias dependências.
+
+---
+
+## Estrutura do desafio
+
+```text
+desafio4/
+  docker-compose.yml
+  service_usuarios/
+    Dockerfile
+    main.py
+    requirements.txt
+  service_relatorios/
+    Dockerfile
+    main.py
+    requirements.txt
+```
+
+---
+
+## Como executar
+
+Na pasta do desafio:
+
+```bash
+cd desafio4
+docker-compose up
+```
+
+Isso vai:
+
+- subir o **service_usuarios** (FastAPI na porta interna 8000, exposta como 7000 no host),
+- subir o **service_relatorios** (FastAPI na porta interna 8001, exposta como 7001 no host),
+- configurar a rede interna `rede_interna` para os dois serviços se enxergarem.
+
+---
+
+## Testando os serviços
+
+### 1. Microsserviço de usuários
+
+No navegador ou via `curl`:
+
+```bash
+curl http://localhost:7000/usuarios
+```
+
+Retorna um JSON com a lista de usuários.
+
+### 2. Microsserviço de relatórios
+
+```bash
+curl http://localhost:7001/relatorio-usuarios
+```
+
+Retorna um JSON com frases montadas a partir dos dados do serviço de usuários, por exemplo:
+
+```json
+{
+  "relatorio": [
+    "Ana está ativa e faz parte do sistema desde 2020.",
+    "Bruno está ativo e faz parte do sistema desde 2022.",
+    "Carla está inativa e faz parte do sistema desde 2019."
+  ]
+}
+```
+
+---
+
+## Como parar
+
+```bash
+docker-compose down
+```
